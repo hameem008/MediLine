@@ -1,3 +1,11 @@
+-- Refresh Token Table
+CREATE TABLE refresh_token (
+    id BIGSERIAL PRIMARY KEY,
+    token VARCHAR(512) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL,
+    expiry_date TIMESTAMP NOT NULL
+);
+
 -- Patient Table
 CREATE TABLE patient (
     patient_id SERIAL PRIMARY KEY,
