@@ -20,12 +20,13 @@ public class RefreshTokenService {
     private JwtUtil jwtUtil;
 
     @Transactional
-    public RefreshToken createRefreshToken(String email) {
-        refreshTokenRepository.deleteByEmail(email); // Remove existing tokens for user
+    public RefreshToken createRefreshToken(String email, String role) {
+        refreshTokenRepository.deleteByEmailAndRole(email, role); // Remove existing tokens for user
 
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setEmail(email);
-        refreshToken.setToken(jwtUtil.generateRefreshToken(email));
+        refreshToken.setRole(role);
+        refreshToken.setToken(jwtUtil.generateRefreshToken(email, role));
         refreshToken.setExpiryDate(Instant.now().plusMillis(604800000)); // 7 days
         return refreshTokenRepository.save(refreshToken);
     }
@@ -35,8 +36,8 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public void deleteByEmail(String email) {
-        refreshTokenRepository.deleteByEmail(email);
+    public void deleteByEmailAndRole(String email, String role) {
+        refreshTokenRepository.deleteByEmailAndRole(email, role);
     }
 
     public boolean validateRefreshToken(String token) {

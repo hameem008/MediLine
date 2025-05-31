@@ -3,6 +3,7 @@ package com.example.MediLine.DTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 @Entity
@@ -11,18 +12,29 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@IdClass(RefreshToken.RefreshTokenId.class)
 public class RefreshToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false, unique = true)
-    private String token;
-
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String email;
 
-    @Column(nullable = false)
+    @Id
+    @Column(nullable = false, length = 50)
+    private String role;
+
+    @Column(nullable = false, unique = true, length = 512)
+    private String token;
+
+    @Column(name = "expiry_date", nullable = false)
     private Instant expiryDate;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    public static class RefreshTokenId implements Serializable {
+        private String email;
+        private String role;
+    }
 }

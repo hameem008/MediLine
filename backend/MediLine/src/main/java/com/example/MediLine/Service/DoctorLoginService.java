@@ -35,7 +35,7 @@ public class DoctorLoginService {
         }
 
         String accessToken = jwtUtil.generateToken(doctor.getEmail(), "ROLE_DOCTOR");
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(doctor.getEmail()); // Deletes old token
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(doctor.getEmail(), "ROLE_DOCTOR"); // Deletes old token
 
         Cookie accessCookie = new Cookie("accessToken", accessToken);
         accessCookie.setHttpOnly(true);

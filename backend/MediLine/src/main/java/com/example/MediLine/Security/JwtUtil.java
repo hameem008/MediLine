@@ -38,10 +38,11 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateRefreshToken(String email) {
+    public String generateRefreshToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
                 .setId(UUID.randomUUID().toString()) // Unique ID for refresh token
+                .claim("role", role) // Add role claim
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -61,7 +62,7 @@ public class JwtUtil {
     }
 
     public String getRoleFromToken(String token) {
-        return getClaimsFromToken(token).get("role", String.class);
+         return getClaimsFromToken(token).get("role", String.class);
     }
 
     public boolean validateToken(String token) {
