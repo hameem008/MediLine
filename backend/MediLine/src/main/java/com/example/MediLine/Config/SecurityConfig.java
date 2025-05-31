@@ -11,8 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Arrays;
@@ -48,10 +49,14 @@ public class SecurityConfig {
                         .requestMatchers("/doctor/**").hasRole("DOCTOR")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, LogoutFilter.class)
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .addLogoutHandler((request, response, authentication) -> {
+                            logger.info("Processing logout request. Cookies: {}",
+                                    request.getCookies() != null ? Arrays.toString(request.getCookies()) : "None");
+                            logger.info("Authentication before logout: {}",
+                                    SecurityContextHolder.getContext().getAuthentication());
                             logger.info("Processing logout request. Authentication: {}", authentication);
                             if (request.getCookies() != null) {
                                 Arrays.stream(request.getCookies())
