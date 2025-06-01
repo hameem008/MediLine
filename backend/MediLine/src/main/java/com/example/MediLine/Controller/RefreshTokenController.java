@@ -41,7 +41,7 @@ public class RefreshTokenController {
 
         String email = jwtUtil.getEmailFromToken(refreshToken);
         String role = jwtUtil.getRoleFromToken(refreshToken);
-        String newAccessToken = jwtUtil.generateToken(email, role);
+        String newAccessToken = jwtUtil.generateAccessToken(email, role);
 
         Cookie accessCookie = new Cookie("accessToken", newAccessToken);
         accessCookie.setHttpOnly(true);

@@ -28,10 +28,11 @@ public class JwtUtil {
         return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
     }
 
-    public String generateToken(String email, String role) {
+    public String generateAccessToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("role", role)
+                .setId(UUID.randomUUID().toString()) // Unique ID for refresh token
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

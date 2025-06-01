@@ -34,7 +34,7 @@ public class PatientLoginService {
             throw new IllegalArgumentException("Invalid password.");
         }
 
-        String accessToken = jwtUtil.generateToken(patient.getEmail(), "ROLE_PATIENT");
+        String accessToken = jwtUtil.generateAccessToken(patient.getEmail(), "ROLE_PATIENT");
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(patient.getEmail(), "ROLE_PATIENT"); // Deletes old token
 
         Cookie accessCookie = new Cookie("accessToken", accessToken);
