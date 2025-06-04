@@ -83,11 +83,13 @@ CREATE TABLE doctor_degree (
 -- Medical Center Table
 CREATE TABLE medical_center (
     medical_center_id SERIAL PRIMARY KEY,
+    email TEXT UNIQUE,
+    password_hash TEXT NOT NULL,
     name TEXT NOT NULL,
     description TEXT,
-    email TEXT UNIQUE,
     phone_number VARCHAR(20) UNIQUE,
-    address TEXT
+    address TEXT,
+    profile_photo_url TEXT
 );
 
 -- Prescription Table

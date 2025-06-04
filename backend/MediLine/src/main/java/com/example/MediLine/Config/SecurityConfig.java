@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/logout").authenticated()
                         .requestMatchers("/patient/**").hasRole("PATIENT")
                         .requestMatchers("/doctor/**").hasRole("DOCTOR")
+                        .requestMatchers("/medical-center/**").hasRole("MEDICAL_CENTER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, LogoutFilter.class)

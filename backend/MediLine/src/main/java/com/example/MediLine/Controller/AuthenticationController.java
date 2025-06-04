@@ -29,6 +29,12 @@ public class AuthenticationController {
     @Autowired
     private DoctorLoginService doctorLoginService;
 
+    @Autowired
+    private MedicalCenterRegisterService medicalCenterRegisterService;
+
+    @Autowired
+    private MedicalCenterLoginService medicalCenterLoginService;
+
     @GetMapping("/ping")
     public String ping() {
         return "Pong 🏓 - Server is alive! Mewo Mewo!";
@@ -62,6 +68,20 @@ public class AuthenticationController {
         return ResponseEntity.ok(responseBody);
     }
 
+    @PostMapping("/register/medical-center")
+    public ResponseEntity registerMedicalCenter(@RequestBody MedicalCenterRegisterRequest request) {
+        MedicalCenter registeredMedicalCenter = medicalCenterRegisterService.registerMedicalCenter(request);
+        return ResponseEntity.ok(registeredMedicalCenter);
+    }
+
+    @PostMapping("/login/medical-center")
+    public ResponseEntity loginMedicalCenter(@RequestBody MedicalCenterLoginRequest request, HttpServletResponse response) {
+        medicalCenterLoginService.loginMedicalCenterAndSetCookies(request, response);
+        Map responseBody = new HashMap<>();
+        responseBody.put("role", "ROLE_MEDICAL_CENTER");
+        return ResponseEntity.ok(responseBody);
+    }
+
     @GetMapping("/patient/profile")
     public ResponseEntity<String> getPatientProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -75,6 +95,17 @@ public class AuthenticationController {
 
     @GetMapping("/doctor/profile")
     public ResponseEntity<String> getDoctorProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            String roles = authentication.getAuthorities().toString();
+            return ResponseEntity.ok("Welcome, " + email + " (Role: " + roles + ")");
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
+    }
+
+    @GetMapping("/medical-center/profile")
+    public ResponseEntity<String> getMedicalCenterProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
