@@ -48,9 +48,20 @@ public class AuthenticationController {
 
     @PostMapping("/login/patient")
     public ResponseEntity loginPatient(@RequestBody PatientLoginRequest request, HttpServletResponse response) {
-        patientLoginService.loginPatientAndSetCookies(request, response);
-        Map responseBody = new HashMap<>();
-        responseBody.put("role", "ROLE_PATIENT");
+        Patient patient = patientLoginService.loginPatientAndSetCookies(request, response);
+        PatientLoginResponse responseBody = new PatientLoginResponse(
+                patient.getPatientId().toString(),
+                patient.getFirstName() + " " + patient.getLastName(),
+                patient.getEmail(),
+                "patient",
+                null,
+                patient.getDateOfBirth().toString(),
+                patient.getGender(),
+                patient.getBloodGroup(),
+                patient.getAddress(),
+                patient.getPhoneNumber(),
+                null
+        );
         return ResponseEntity.ok(responseBody);
     }
 

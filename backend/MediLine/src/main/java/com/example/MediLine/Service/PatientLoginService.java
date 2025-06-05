@@ -26,7 +26,7 @@ public class PatientLoginService {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
-    public void loginPatientAndSetCookies(PatientLoginRequest request, HttpServletResponse response) {
+    public Patient loginPatientAndSetCookies(PatientLoginRequest request, HttpServletResponse response) {
         Patient patient = patientRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("No patient found with this email."));
 
@@ -50,5 +50,7 @@ public class PatientLoginService {
         refreshCookie.setPath("/");
         refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
         response.addCookie(refreshCookie);
+
+        return patient;
     }
 }
