@@ -1,18 +1,24 @@
 package com.example.MediLine.Controller;
 
-import com.example.MediLine.DTO.RefreshToken;
-import com.example.MediLine.Security.JwtUtil;
-import com.example.MediLine.Service.RefreshTokenService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
+import com.example.MediLine.Config.CookieConfig;
+import com.example.MediLine.DTO.RefreshToken;
+import com.example.MediLine.Security.JwtUtil;
+import com.example.MediLine.Service.RefreshTokenService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+
+
 
 @RestController
 @RequestMapping("/refresh")
@@ -23,6 +29,9 @@ public class RefreshTokenController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private CookieConfig cookieConfig;
 
     @PostMapping
     public ResponseEntity refreshToken(HttpServletRequest request, HttpServletResponse response) {
@@ -43,11 +52,7 @@ public class RefreshTokenController {
         String role = jwtUtil.getRoleFromToken(refreshToken);
         String newAccessToken = jwtUtil.generateAccessToken(email, role);
 
-        Cookie accessCookie = new Cookie("accessToken", newAccessToken);
-        accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(false); // Set to true in production
-        accessCookie.setPath("/");
-        accessCookie.setMaxAge(3600); // 1 hour
+        Cookie accessCookie = cookieConfig.createAccessTokenCookie(newAccessToken);
         response.addCookie(accessCookie);
 
         return ResponseEntity.ok().build();

@@ -1,15 +1,20 @@
 package com.example.MediLine.Service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.example.MediLine.Config.CookieConfig;
 import com.example.MediLine.DTO.Patient;
 import com.example.MediLine.DTO.PatientLoginRequest;
 import com.example.MediLine.DTO.RefreshToken;
 import com.example.MediLine.Repository.PatientRepository;
 import com.example.MediLine.Security.JwtUtil;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+
+
 
 @Service
 public class PatientLoginService {
@@ -26,6 +31,9 @@ public class PatientLoginService {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
+    @Autowired
+    private CookieConfig cookieConfig;
+
     public Patient loginPatientAndSetCookies(PatientLoginRequest request, HttpServletResponse response) {
         Patient patient = patientRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("No patient found with this email."));
@@ -35,20 +43,12 @@ public class PatientLoginService {
         }
 
         String accessToken = jwtUtil.generateAccessToken(patient.getEmail(), "ROLE_PATIENT");
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(patient.getEmail(), "ROLE_PATIENT"); // Deletes old token
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(patient.getEmail(), "ROLE_PATIENT");
 
-        Cookie accessCookie = new Cookie("accessToken", accessToken);
-        accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(false); // Set to true in production with HTTPS
-        accessCookie.setPath("/");
-        accessCookie.setMaxAge(3600); // 1 hour
+        Cookie accessCookie = cookieConfig.createAccessTokenCookie(accessToken);
+        Cookie refreshCookie = cookieConfig.createRefreshTokenCookie(refreshToken.getToken());
+
         response.addCookie(accessCookie);
-
-        Cookie refreshCookie = new Cookie("refreshToken", refreshToken.getToken());
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(false); // Set to true in production with HTTPS
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
         response.addCookie(refreshCookie);
 
         return patient;

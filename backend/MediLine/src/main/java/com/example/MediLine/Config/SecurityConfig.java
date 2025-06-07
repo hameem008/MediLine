@@ -1,10 +1,7 @@
 package com.example.MediLine.Config;
 
-import com.example.MediLine.Security.JwtAuthenticationFilter;
-import com.example.MediLine.Security.JwtUtil;
-import com.example.MediLine.Service.RefreshTokenService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import java.util.Arrays;
+import com.example.MediLine.Security.JwtAuthenticationFilter;
+import com.example.MediLine.Security.JwtUtil;
+import com.example.MediLine.Service.RefreshTokenService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
+
+
 
 @Configuration
 public class SecurityConfig {
@@ -31,6 +36,9 @@ public class SecurityConfig {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private CookieConfig cookieConfig;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -108,18 +116,9 @@ public class SecurityConfig {
                                 }
                             }
 
-                            // Clear cookies
-                            Cookie accessCookie = new Cookie("accessToken", null);
-                            accessCookie.setHttpOnly(true);
-                            accessCookie.setPath("/");
-                            accessCookie.setMaxAge(0);
-                            response.addCookie(accessCookie);
-
-                            Cookie refreshCookie = new Cookie("refreshToken", null);
-                            refreshCookie.setHttpOnly(true);
-                            refreshCookie.setPath("/");
-                            refreshCookie.setMaxAge(0);
-                            response.addCookie(refreshCookie);
+                            // Clear cookies using CookieConfig
+                            response.addCookie(cookieConfig.createEmptyAccessTokenCookie());
+                            response.addCookie(cookieConfig.createEmptyRefreshTokenCookie());
 
                             // Delete refresh token from database
                             if (email != null && role != null) {
