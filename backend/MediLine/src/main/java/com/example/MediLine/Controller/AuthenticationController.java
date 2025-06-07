@@ -1,6 +1,9 @@
 package com.example.MediLine.Controller;
 
 import com.example.MediLine.DTO.*;
+import com.example.MediLine.Repository.DoctorRepository;
+import com.example.MediLine.Repository.MedicalCenterRepository;
+import com.example.MediLine.Repository.PatientRepository;
 import com.example.MediLine.Service.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,15 @@ public class AuthenticationController {
 
     @Autowired
     private MedicalCenterLoginService medicalCenterLoginService;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    @Autowired
+    private MedicalCenterRepository medicalCenterRepository;
 
     @GetMapping("/ping")
     public String ping() {
@@ -94,12 +106,65 @@ public class AuthenticationController {
     }
 
     @GetMapping("/patient/profile")
-    public ResponseEntity<String> getPatientProfile() {
+    public ResponseEntity getPatientProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            Patient patient = patientRepository.findByEmail(email)
+                    .orElseThrow(() -> new IllegalArgumentException("No Patient found with this email."));
+            return ResponseEntity.ok(patient);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
+    }
+
+    @GetMapping("/patient/me")
+    public ResponseEntity getPatientMe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
             String roles = authentication.getAuthorities().toString();
-            return ResponseEntity.ok("Welcome, " + email + " (Role: " + roles + ")");
+            Patient patient = patientRepository.findByEmail(email)
+                    .orElseThrow(() -> new IllegalArgumentException("No patient found with this email."));
+            PatientLoginResponse responseBody = new PatientLoginResponse(
+                    patient.getPatientId().toString(),
+                    patient.getFirstName() + " " + patient.getLastName(),
+                    patient.getEmail(),
+                    "patient",
+                    null,
+                    patient.getDateOfBirth().toString(),
+                    patient.getGender(),
+                    patient.getBloodGroup(),
+                    patient.getAddress(),
+                    patient.getPhoneNumber(),
+                    null
+            );
+            return ResponseEntity.ok(responseBody);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity getMe() {
+        System.out.println("bingo bingo");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            String roles = authentication.getAuthorities().toString();
+            User responseBody = new User();
+            if (roles == "ROLE_PATIENT"){
+                Patient patient = patientRepository.findByEmail(email)
+                        .orElseThrow(() -> new IllegalArgumentException("No Patient found with this email."));
+                responseBody.setUserId(patient.getPatientId());
+            } else if (roles == "ROLE_DOCTOR") {
+                Doctor doctor = doctorRepository.findByEmail(email)
+                        .orElseThrow(() -> new IllegalArgumentException("No Doctor found with this email."));
+                responseBody.setUserId(doctor.getDoctorId());
+            } else if (roles == "ROLE_MEDICAL_CENTER") {
+                MedicalCenter medicalCenter = medicalCenterRepository.findByEmail(email)
+                        .orElseThrow(() -> new IllegalArgumentException("No Medical Center found with this email."));
+                responseBody.setUserId(medicalCenter.getMedicalCenterId());
+            }
+            return ResponseEntity.ok(responseBody);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
     }
