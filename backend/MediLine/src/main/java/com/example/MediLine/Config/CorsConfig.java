@@ -15,9 +15,11 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:8080") // Frontend URL
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                         .allowedHeaders("*")
-                        .allowCredentials(true); // Allow cookies
+                        .exposedHeaders("Set-Cookie")
+                        .allowCredentials(true) // Allow cookies
+                        .maxAge(3600); // Cache preflight requests for 1 hour
             }
         };
     }
