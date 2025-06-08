@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @Builder
 public class Patient {
 
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer patientId;
@@ -22,7 +21,6 @@ public class Patient {
     @Column(unique = true)
     private String email;
 
-    @JsonIgnore
     @Column(nullable = false)
     private String passwordHash;
 
