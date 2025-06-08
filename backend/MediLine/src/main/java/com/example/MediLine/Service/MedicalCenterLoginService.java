@@ -34,7 +34,7 @@ public class MedicalCenterLoginService {
     @Autowired
     private CookieConfig cookieConfig;
 
-    public void loginMedicalCenterAndSetCookies(MedicalCenterLoginRequest request, HttpServletResponse response) {
+    public MedicalCenter loginMedicalCenterAndSetCookies(MedicalCenterLoginRequest request, HttpServletResponse response) {
         MedicalCenter medicalCenter = medicalCenterRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("No medical center found with this email."));
 
@@ -50,5 +50,7 @@ public class MedicalCenterLoginService {
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
+
+        return medicalCenter;
     }
 }

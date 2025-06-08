@@ -8,6 +8,14 @@ import lombok.*;
 @Builder
 public class User {
 
-    private Integer userId;
+    private String id;
+
+    private String name;
+
+    private String email;
+
+    private String type;
+
+    private String avatar;
 
 }

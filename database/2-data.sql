@@ -40,6 +40,7 @@ INSERT INTO public.doctor VALUES (1, 'hameem812@gmail.com', '$2a$10$KOGWZXDJFvjF
 -- Data for Name: medical_center; Type: TABLE DATA; Schema: public; Owner: myuser
 --
 
+INSERT INTO public.medical_center VALUES (1, 'dmc@gmail.com', '$2a$10$D5N39QPYgV9LRAKlgTtZUOIa9zhsNxBN9k5aTRaxcNsCQu8RXfwjm', 'Dhaka Medical College', 'Near Buet.', '01944972610', 'Dhaka, Bangladesh', NULL);
 
 
 --
@@ -183,7 +184,7 @@ SELECT pg_catalog.setval('public.doctor_review_review_id_seq', 1, false);
 -- Name: medical_center_medical_center_id_seq; Type: SEQUENCE SET; Schema: public; Owner: myuser
 --
 
-SELECT pg_catalog.setval('public.medical_center_medical_center_id_seq', 1, false);
+SELECT pg_catalog.setval('public.medical_center_medical_center_id_seq', 1, true);
 
 
 --

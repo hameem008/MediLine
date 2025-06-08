@@ -15,7 +15,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
 
-
 @Service
 public class DoctorLoginService {
 
@@ -34,7 +33,7 @@ public class DoctorLoginService {
     @Autowired
     private CookieConfig cookieConfig;
 
-    public void loginDoctorAndSetCookies(DoctorLoginRequest request, HttpServletResponse response) {
+    public Doctor loginDoctorAndSetCookies(DoctorLoginRequest request, HttpServletResponse response) {
         Doctor doctor = doctorRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("No doctor found with this email."));
 
@@ -50,5 +49,7 @@ public class DoctorLoginService {
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
+
+        return doctor;
     }
 }
