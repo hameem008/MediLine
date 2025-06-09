@@ -15,3 +15,16 @@ services:
       - ./2-data.sql:/docker-entrypoint-initdb.d/2-data.sql
       - ./entrypoint.sh:/entrypoint.sh
     entrypoint: ["/entrypoint.sh"]
+
+  backend:
+    build:
+      context: ../backend/MediLine    # path to the Dockerfile above
+    container_name: mediline-backend
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mydb
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=mypassword
