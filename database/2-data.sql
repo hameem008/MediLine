@@ -21,6 +21,8 @@ SET row_security = off;
 --
 
 INSERT INTO public.patient VALUES (1, 'hameem@gmail.com', '$2a$10$0i69hPaehmg94zWNmGAU0uJF9HCaSvu7S3Q8gbi8LFQry50qFWqBS', 'Ha', 'Meem', 'Male', '2002-12-08', 'A+', '01944972610', 'Dhaka, Bangladesh', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face');
+INSERT INTO public.patient VALUES (2, 'islamrafi74@gmail.com', '$2a$10$gcFzuSxTG9CucGxXoSZ1gePBhtNikLEZyvSqhOZ1xX83TPkIvOdAW', 'Md. Rafiul', 'Islam', 'Male', '2002-02-06', 'A+', '01732170161', '275/3, Jafrabad, Mohammadpur, Dhaka
+275/3, Jafrabad, Mohammadpur, Dhaka', NULL);
 
 
 --
@@ -125,6 +127,7 @@ INSERT INTO public.medical_center VALUES (1, 'dmc@gmail.com', '$2a$10$D5N39QPYgV
 -- Data for Name: refresh_token; Type: TABLE DATA; Schema: public; Owner: myuser
 --
 
+INSERT INTO public.refresh_token VALUES ('islamrafi74@gmail.com', 'ROLE_PATIENT', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpc2xhbXJhZmk3NEBnbWFpbC5jb20iLCJqdGkiOiI5ZGUyMGIxNS05MDMyLTQ0NGUtOWRjOC04NmI4NmQzMGFkNzEiLCJyb2xlIjoiUk9MRV9QQVRJRU5UIiwiaWF0IjoxNzQ5NDcwMDE1LCJleHAiOjE3NTAwNzQ4MTV9.IwpFz7VmwRHQiAi7GcY-UAb-CEqPNuKpDXKoZqfiU78', '2025-06-16 11:53:35.437327');
 
 
 --
@@ -198,7 +201,7 @@ SELECT pg_catalog.setval('public.medicines_medicine_id_seq', 1, false);
 -- Name: patient_patient_id_seq; Type: SEQUENCE SET; Schema: public; Owner: myuser
 --
 
-SELECT pg_catalog.setval('public.patient_patient_id_seq', 1, true);
+SELECT pg_catalog.setval('public.patient_patient_id_seq', 2, true);
 
 
 --
