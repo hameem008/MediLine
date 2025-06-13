@@ -27,19 +27,17 @@ CREATE TABLE patient (
     CONSTRAINT chk_patient_phone_number CHECK (phone_number ~ '^[0-9]{10,15}$')
 );
 
--- Chronic Condition Table
-CREATE TABLE chronic_condition (
-    patient_id INT REFERENCES patient(patient_id) ON DELETE CASCADE,
-    condition TEXT,
-    PRIMARY KEY (patient_id, condition)
+
+-- Severity Levels Table
+CREATE TABLE severity_levels (
+    severity_level INT PRIMARY KEY,
+    description TEXT UNIQUE
 );
 
--- Allergies Table
-CREATE TABLE allergies (
-    patient_id INT REFERENCES patient(patient_id) ON DELETE CASCADE,
-    allergy TEXT,
-    description TEXT,
-    PRIMARY KEY (patient_id, allergy)
+-- Mood Options Table
+CREATE TABLE mood_options (
+    mood_value VARCHAR(20) PRIMARY KEY,
+    display_order INT
 );
 
 -- Symptom Table
@@ -48,8 +46,13 @@ CREATE TABLE symptom (
     description TEXT,
     date DATE DEFAULT CURRENT_DATE,
     time TIME DEFAULT CURRENT_TIME,
-    PRIMARY KEY (patient_id, date, time)
+    overall_mood VARCHAR(20),
+    severity_level INT,
+    PRIMARY KEY (patient_id, date, time),
+    FOREIGN KEY (overall_mood) REFERENCES mood_options(mood_value),
+    FOREIGN KEY (severity_level) REFERENCES severity_levels(severity_level)
 );
+
 
 -- Doctor Table
 CREATE TABLE doctor (
@@ -63,7 +66,6 @@ CREATE TABLE doctor (
     designation TEXT,
     academic_institution TEXT,
     phone_number VARCHAR(20) UNIQUE,
-    address TEXT,
     bio TEXT,
     profile_photo_url TEXT,
     CONSTRAINT chk_doctor_gender CHECK (gender IN ('Male', 'Female', 'Other')),
@@ -107,9 +109,8 @@ CREATE TABLE prescription (
     notes TEXT,
     next_appointment_date DATE,
     CONSTRAINT chk_prescription_dates CHECK (
-        prescribed_date <= CURRENT_DATE AND 
-        (next_appointment_date IS NULL OR next_appointment_date >= prescribed_date)
-    )
+      prescribed_date <= CURRENT_DATE AND
+          (next_appointment_date IS NULL OR next_appointment_date >= prescribed_date))
 );
 
 -- Diseases Table
@@ -178,7 +179,6 @@ CREATE TABLE performed_tests (
     prescription_id INT REFERENCES prescription(prescription_id) ON DELETE CASCADE,
     test_date DATE DEFAULT CURRENT_DATE,
     note TEXT,
-    suggested_by_doctor_id INT REFERENCES doctor(doctor_id) ON DELETE SET NULL,
     performed_by_doctor_id INT REFERENCES doctor(doctor_id) ON DELETE SET NULL,
     reviewed_by_doctor_id INT REFERENCES doctor(doctor_id) ON DELETE SET NULL,
     medical_center_id INT REFERENCES medical_center(medical_center_id),
@@ -229,3 +229,39 @@ CREATE TABLE doctor_review (
     description TEXT,
     date DATE DEFAULT CURRENT_DATE
 );
+
+-- Hospital Test Availability Table
+CREATE TABLE hospital_test_availability (
+    medical_center_id INT REFERENCES medical_center(medical_center_id) ON DELETE CASCADE,
+    test_id INT REFERENCES tests(test_id) ON DELETE CASCADE,
+    cost NUMERIC CHECK (cost >= 0),
+    estimated_report_time INTERVAL,  -- e.g., '2 days'
+    PRIMARY KEY (medical_center_id, test_id)
+);
+
+
+-- Test Request Table
+CREATE TABLE test_request (
+    request_id SERIAL PRIMARY KEY,
+    patient_id INT REFERENCES patient(patient_id) ON DELETE CASCADE,
+    test_id INT REFERENCES tests(test_id),
+    medical_center_id INT REFERENCES medical_center(medical_center_id),
+    requested_date DATE DEFAULT CURRENT_DATE,
+    status VARCHAR(10) CHECK (status IN ('Pending', 'Accepted', 'Rejected', 'Sample Collected')),
+    prescription_id INT REFERENCES prescription(prescription_id) ON DELETE CASCADE,
+    notes TEXT
+);
+
+
+-- Notification Table
+CREATE TABLE notification (
+    notification_id SERIAL PRIMARY KEY,
+    recipient_id INT NOT NULL,
+    recipient_type VARCHAR(20) CHECK (recipient_type IN ('Patient', 'Doctor', 'Hospital')),
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_read BOOLEAN DEFAULT FALSE
+);
+
+
+
