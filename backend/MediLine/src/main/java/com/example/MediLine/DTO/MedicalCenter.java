@@ -2,6 +2,8 @@ package com.example.MediLine.DTO;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
+
 
 @Entity
 @Table(name = "medical_center")
@@ -32,4 +34,8 @@ public class MedicalCenter {
     private String address;
 
     private String profilePhotoUrl;
+
+    @OneToMany(mappedBy = "medicalCenter")
+    private List<DoctorAvailability> doctorAvailabilities;
+
 }

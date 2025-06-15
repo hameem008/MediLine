@@ -1,0 +1,16 @@
+### Login - saves HttpOnly cookies
+POST http://localhost:8081/login/patient
+Content-Type: application/json
+
+{
+  "email": "rafi.hossain192@gmail.com",
+  "password": "123"
+}
+
+###
+
+### Access protected endpoint using cookies
+GET http://localhost:8081/patient/specialties
+Accept: application/json
+
+###

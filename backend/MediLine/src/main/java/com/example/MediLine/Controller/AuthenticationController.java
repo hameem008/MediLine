@@ -70,12 +70,14 @@ public class AuthenticationController {
     @PostMapping("/login/patient")
     public ResponseEntity loginPatient(@RequestBody PatientLoginRequest request, HttpServletResponse response) {
         Patient patient = patientLoginService.loginPatientAndSetCookies(request, response);
+
         User responseBody = new User();
         responseBody.setId(patient.getPatientId().toString());
         responseBody.setName(patient.getFirstName() + " " + patient.getLastName());
         responseBody.setEmail(patient.getEmail());
         responseBody.setType("patient");
         responseBody.setAvatar(patient.getProfilePhotoUrl());
+
         return ResponseEntity.ok(responseBody);
     }
 
