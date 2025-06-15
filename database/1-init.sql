@@ -149,7 +149,7 @@ CREATE TABLE public.doctor_availability (
     visit_capacity integer,
     chamber text,
     day_of_week character varying(255),
-    CONSTRAINT chk_availability_week_day CHECK (((week_day)::text = ANY (ARRAY[('Monday'::character varying)::text, ('Tuesday'::character varying)::text, ('Wednesday'::character varying)::text, ('Thursday'::character varying)::text, ('Friday'::character varying)::text, ('Saturday'::character varying)::text, ('Sunday'::character varying)::text]))),
+    CONSTRAINT chk_availability_week_day CHECK (((week_day)::text = ANY ((ARRAY['Monday'::character varying, 'Tuesday'::character varying, 'Wednesday'::character varying, 'Thursday'::character varying, 'Friday'::character varying, 'Saturday'::character varying, 'Sunday'::character varying])::text[]))),
     CONSTRAINT doctor_availability_duration_check CHECK ((duration > 0)),
     CONSTRAINT doctor_availability_fee_check CHECK ((fee >= 0)),
     CONSTRAINT doctor_availability_visit_capacity_check CHECK ((visit_capacity > 0))
@@ -368,7 +368,7 @@ CREATE TABLE public.notification (
     message text NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     is_read boolean DEFAULT false,
-    CONSTRAINT notification_recipient_type_check CHECK (((recipient_type)::text = ANY (ARRAY[('Patient'::character varying)::text, ('Doctor'::character varying)::text, ('Hospital'::character varying)::text])))
+    CONSTRAINT notification_recipient_type_check CHECK (((recipient_type)::text = ANY ((ARRAY['Patient'::character varying, 'Doctor'::character varying, 'Hospital'::character varying])::text[])))
 );
 
 
@@ -631,7 +631,7 @@ CREATE TABLE public.test_request (
     status character varying(10),
     prescription_id integer,
     notes text,
-    CONSTRAINT test_request_status_check CHECK (((status)::text = ANY (ARRAY[('Pending'::character varying)::text, ('Accepted'::character varying)::text, ('Rejected'::character varying)::text, ('Sample Collected'::character varying)::text])))
+    CONSTRAINT test_request_status_check CHECK (((status)::text = ANY ((ARRAY['Pending'::character varying, 'Accepted'::character varying, 'Rejected'::character varying, 'Sample Collected'::character varying])::text[])))
 );
 
 
@@ -681,7 +681,7 @@ CREATE TABLE public.tests (
     test_name text,
     description text,
     type character varying(20),
-    CONSTRAINT chk_test_type CHECK (((type)::text = ANY (ARRAY[('Pathology'::character varying)::text, ('Imaging'::character varying)::text])))
+    CONSTRAINT chk_test_type CHECK (((type)::text = ANY ((ARRAY['Pathology'::character varying, 'Imaging'::character varying])::text[])))
 );
 
 
