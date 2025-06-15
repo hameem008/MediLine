@@ -25,14 +25,14 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.appointment (
-                                    appointment_id integer NOT NULL,
-                                    doctor_id integer,
-                                    patient_id integer,
-                                    date date,
-                                    "time" time without time zone,
-                                    slot_id integer,
-                                    serial_number integer,
-                                    CONSTRAINT appointment_date_check CHECK ((date >= CURRENT_DATE))
+    appointment_id integer NOT NULL,
+    doctor_id integer,
+    patient_id integer,
+    date date,
+    "time" time without time zone,
+    slot_id integer,
+    serial_number integer,
+    CONSTRAINT appointment_date_check CHECK ((date >= CURRENT_DATE))
 );
 
 
@@ -65,8 +65,8 @@ ALTER SEQUENCE public.appointment_appointment_id_seq OWNED BY public.appointment
 --
 
 CREATE TABLE public.diagnosed_diseases (
-                                           prescription_id integer NOT NULL,
-                                           disease_id integer NOT NULL
+    prescription_id integer NOT NULL,
+    disease_id integer NOT NULL
 );
 
 
@@ -77,9 +77,9 @@ ALTER TABLE public.diagnosed_diseases OWNER TO myuser;
 --
 
 CREATE TABLE public.diseases (
-                                 disease_id integer NOT NULL,
-                                 disease_name text,
-                                 description text
+    disease_id integer NOT NULL,
+    disease_name text,
+    description text
 );
 
 
@@ -112,20 +112,21 @@ ALTER SEQUENCE public.diseases_disease_id_seq OWNED BY public.diseases.disease_i
 --
 
 CREATE TABLE public.doctor (
-                               doctor_id integer NOT NULL,
-                               email text,
-                               password_hash text NOT NULL,
-                               first_name text NOT NULL,
-                               last_name text NOT NULL,
-                               gender character varying(10),
-                               specialization text,
-                               designation text,
-                               academic_institution text,
-                               phone_number character varying(20),
-                               bio text,
-                               profile_photo_url text,
-                               CONSTRAINT chk_doctor_email CHECK ((email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$'::text)),
-                               CONSTRAINT chk_doctor_gender CHECK (((gender)::text = ANY ((ARRAY['Male'::character varying, 'Female'::character varying, 'Other'::character varying])::text[]))),
+    doctor_id integer NOT NULL,
+    email character varying(255),
+    password_hash character varying(255) NOT NULL,
+    first_name character varying(255) NOT NULL,
+    last_name character varying(255) NOT NULL,
+    gender character varying(255),
+    specialization character varying(255),
+    designation character varying(255),
+    academic_institution character varying(255),
+    phone_number character varying(255),
+    bio character varying(255),
+    profile_photo_url character varying(255),
+    address character varying(255),
+    CONSTRAINT chk_doctor_email CHECK (((email)::text ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$'::text)),
+    CONSTRAINT chk_doctor_gender CHECK (((gender)::text = ANY (ARRAY[('Male'::character varying)::text, ('Female'::character varying)::text, ('Other'::character varying)::text]))),
     CONSTRAINT chk_doctor_phone_number CHECK (((phone_number)::text ~ '^[0-9]{10,15}$'::text))
 );
 
@@ -137,17 +138,18 @@ ALTER TABLE public.doctor OWNER TO myuser;
 --
 
 CREATE TABLE public.doctor_availability (
-                                            slot_id integer NOT NULL,
-                                            doctor_id integer,
-                                            medical_center_id integer,
-                                            start_time time without time zone,
-                                            end_time time without time zone,
-                                            week_day character varying(10),
-                                            duration integer,
-                                            fee integer,
-                                            visit_capacity integer,
-                                            chamber text,
-                                            CONSTRAINT chk_availability_week_day CHECK (((week_day)::text = ANY ((ARRAY['Monday'::character varying, 'Tuesday'::character varying, 'Wednesday'::character varying, 'Thursday'::character varying, 'Friday'::character varying, 'Saturday'::character varying, 'Sunday'::character varying])::text[]))),
+    slot_id integer NOT NULL,
+    doctor_id integer,
+    medical_center_id integer,
+    start_time character varying(255),
+    end_time character varying(255),
+    week_day character varying(10),
+    duration integer,
+    fee integer,
+    visit_capacity integer,
+    chamber text,
+    day_of_week character varying(255),
+    CONSTRAINT chk_availability_week_day CHECK (((week_day)::text = ANY (ARRAY[('Monday'::character varying)::text, ('Tuesday'::character varying)::text, ('Wednesday'::character varying)::text, ('Thursday'::character varying)::text, ('Friday'::character varying)::text, ('Saturday'::character varying)::text, ('Sunday'::character varying)::text]))),
     CONSTRAINT doctor_availability_duration_check CHECK ((duration > 0)),
     CONSTRAINT doctor_availability_fee_check CHECK ((fee >= 0)),
     CONSTRAINT doctor_availability_visit_capacity_check CHECK ((visit_capacity > 0))
@@ -183,10 +185,10 @@ ALTER SEQUENCE public.doctor_availability_slot_id_seq OWNED BY public.doctor_ava
 --
 
 CREATE TABLE public.doctor_degree (
-                                      doctor_id integer NOT NULL,
-                                      degree_name text NOT NULL,
-                                      institution text,
-                                      passing_year integer
+    doctor_id integer NOT NULL,
+    degree_name text NOT NULL,
+    institution text,
+    passing_year integer
 );
 
 
@@ -219,13 +221,13 @@ ALTER SEQUENCE public.doctor_doctor_id_seq OWNED BY public.doctor.doctor_id;
 --
 
 CREATE TABLE public.doctor_review (
-                                      review_id integer NOT NULL,
-                                      doctor_id integer,
-                                      patient_id integer,
-                                      rating integer,
-                                      description text,
-                                      date date DEFAULT CURRENT_DATE,
-                                      CONSTRAINT doctor_review_rating_check CHECK (((rating >= 1) AND (rating <= 5)))
+    review_id integer NOT NULL,
+    doctor_id integer,
+    patient_id integer,
+    rating integer,
+    description text,
+    date date DEFAULT CURRENT_DATE,
+    CONSTRAINT doctor_review_rating_check CHECK (((rating >= 1) AND (rating <= 5)))
 );
 
 
@@ -258,11 +260,11 @@ ALTER SEQUENCE public.doctor_review_review_id_seq OWNED BY public.doctor_review.
 --
 
 CREATE TABLE public.hospital_test_availability (
-                                                   medical_center_id integer NOT NULL,
-                                                   test_id integer NOT NULL,
-                                                   cost numeric,
-                                                   estimated_report_time interval,
-                                                   CONSTRAINT hospital_test_availability_cost_check CHECK ((cost >= (0)::numeric))
+    medical_center_id integer NOT NULL,
+    test_id integer NOT NULL,
+    cost numeric,
+    estimated_report_time interval,
+    CONSTRAINT hospital_test_availability_cost_check CHECK ((cost >= (0)::numeric))
 );
 
 
@@ -273,14 +275,14 @@ ALTER TABLE public.hospital_test_availability OWNER TO myuser;
 --
 
 CREATE TABLE public.medical_center (
-                                       medical_center_id integer NOT NULL,
-                                       email text,
-                                       password_hash text NOT NULL,
-                                       name text NOT NULL,
-                                       description text,
-                                       phone_number character varying(20),
-                                       address text,
-                                       profile_photo_url text
+    medical_center_id integer NOT NULL,
+    email character varying(255),
+    password_hash character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
+    description text,
+    phone_number character varying(255),
+    address character varying(255),
+    profile_photo_url character varying(255)
 );
 
 
@@ -313,9 +315,9 @@ ALTER SEQUENCE public.medical_center_medical_center_id_seq OWNED BY public.medic
 --
 
 CREATE TABLE public.medicines (
-                                  medicine_id integer NOT NULL,
-                                  medicine_name text,
-                                  description text
+    medicine_id integer NOT NULL,
+    medicine_name text,
+    description text
 );
 
 
@@ -348,8 +350,8 @@ ALTER SEQUENCE public.medicines_medicine_id_seq OWNED BY public.medicines.medici
 --
 
 CREATE TABLE public.mood_options (
-                                     mood_value character varying(20) NOT NULL,
-                                     display_order integer
+    mood_value character varying(20) NOT NULL,
+    display_order integer
 );
 
 
@@ -360,13 +362,13 @@ ALTER TABLE public.mood_options OWNER TO myuser;
 --
 
 CREATE TABLE public.notification (
-                                     notification_id integer NOT NULL,
-                                     recipient_id integer NOT NULL,
-                                     recipient_type character varying(20),
-                                     message text NOT NULL,
-                                     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-                                     is_read boolean DEFAULT false,
-                                     CONSTRAINT notification_recipient_type_check CHECK (((recipient_type)::text = ANY ((ARRAY['Patient'::character varying, 'Doctor'::character varying, 'Hospital'::character varying])::text[])))
+    notification_id integer NOT NULL,
+    recipient_id integer NOT NULL,
+    recipient_type character varying(20),
+    message text NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    is_read boolean DEFAULT false,
+    CONSTRAINT notification_recipient_type_check CHECK (((recipient_type)::text = ANY (ARRAY[('Patient'::character varying)::text, ('Doctor'::character varying)::text, ('Hospital'::character varying)::text])))
 );
 
 
@@ -399,21 +401,21 @@ ALTER SEQUENCE public.notification_notification_id_seq OWNED BY public.notificat
 --
 
 CREATE TABLE public.patient (
-                                patient_id integer NOT NULL,
-                                email text,
-                                password_hash text NOT NULL,
-                                first_name text NOT NULL,
-                                last_name text NOT NULL,
-                                gender character varying(10),
-                                date_of_birth date,
-                                blood_group character varying(5),
-                                phone_number character varying(20),
-                                address text,
-                                profile_photo_url text,
-                                CONSTRAINT chk_patient_blood_group CHECK (((blood_group)::text = ANY ((ARRAY['A+'::character varying, 'A-'::character varying, 'B+'::character varying, 'B-'::character varying, 'AB+'::character varying, 'AB-'::character varying, 'O+'::character varying, 'O-'::character varying])::text[]))),
+    patient_id integer NOT NULL,
+    email character varying(255),
+    password_hash character varying(255) NOT NULL,
+    first_name character varying(255) NOT NULL,
+    last_name character varying(255) NOT NULL,
+    gender character varying(255),
+    date_of_birth date,
+    blood_group character varying(255),
+    phone_number character varying(255),
+    address character varying(255),
+    profile_photo_url character varying(255),
+    CONSTRAINT chk_patient_blood_group CHECK (((blood_group)::text = ANY (ARRAY[('A+'::character varying)::text, ('A-'::character varying)::text, ('B+'::character varying)::text, ('B-'::character varying)::text, ('AB+'::character varying)::text, ('AB-'::character varying)::text, ('O+'::character varying)::text, ('O-'::character varying)::text]))),
     CONSTRAINT chk_patient_dob CHECK ((date_of_birth <= CURRENT_DATE)),
-    CONSTRAINT chk_patient_email CHECK ((email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$'::text)),
-    CONSTRAINT chk_patient_gender CHECK (((gender)::text = ANY ((ARRAY['Male'::character varying, 'Female'::character varying, 'Other'::character varying])::text[]))),
+    CONSTRAINT chk_patient_email CHECK (((email)::text ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$'::text)),
+    CONSTRAINT chk_patient_gender CHECK (((gender)::text = ANY (ARRAY[('Male'::character varying)::text, ('Female'::character varying)::text, ('Other'::character varying)::text]))),
     CONSTRAINT chk_patient_phone_number CHECK (((phone_number)::text ~ '^[0-9]{10,15}$'::text))
 );
 
@@ -447,15 +449,15 @@ ALTER SEQUENCE public.patient_patient_id_seq OWNED BY public.patient.patient_id;
 --
 
 CREATE TABLE public.performed_tests (
-                                        performed_test_id integer NOT NULL,
-                                        test_id integer,
-                                        prescription_id integer,
-                                        test_date date DEFAULT CURRENT_DATE,
-                                        note text,
-                                        performed_by_doctor_id integer,
-                                        reviewed_by_doctor_id integer,
-                                        medical_center_id integer,
-                                        pdf_url text
+    performed_test_id integer NOT NULL,
+    test_id integer,
+    prescription_id integer,
+    test_date date DEFAULT CURRENT_DATE,
+    note text,
+    performed_by_doctor_id integer,
+    reviewed_by_doctor_id integer,
+    medical_center_id integer,
+    pdf_url text
 );
 
 
@@ -488,12 +490,12 @@ ALTER SEQUENCE public.performed_tests_performed_test_id_seq OWNED BY public.perf
 --
 
 CREATE TABLE public.prescribed_medicine (
-                                            prescription_id integer NOT NULL,
-                                            medicine_id integer NOT NULL,
-                                            dosage text,
-                                            frequency text,
-                                            duration text,
-                                            instruction text
+    prescription_id integer NOT NULL,
+    medicine_id integer NOT NULL,
+    dosage text,
+    frequency text,
+    duration text,
+    instruction text
 );
 
 
@@ -504,8 +506,8 @@ ALTER TABLE public.prescribed_medicine OWNER TO myuser;
 --
 
 CREATE TABLE public.prescribed_tests (
-                                         prescription_id integer NOT NULL,
-                                         test_id integer NOT NULL
+    prescription_id integer NOT NULL,
+    test_id integer NOT NULL
 );
 
 
@@ -516,21 +518,21 @@ ALTER TABLE public.prescribed_tests OWNER TO myuser;
 --
 
 CREATE TABLE public.prescription (
-                                     prescription_id integer NOT NULL,
-                                     patient_id integer,
-                                     doctor_id integer,
-                                     medical_center_id integer,
-                                     summary text,
-                                     prescribed_date date DEFAULT CURRENT_DATE,
-                                     symptoms text,
-                                     weight numeric,
-                                     blood_pressure character varying(20),
-                                     heart_rate integer,
-                                     notes text,
-                                     next_appointment_date date,
-                                     CONSTRAINT chk_prescription_dates CHECK (((prescribed_date <= CURRENT_DATE) AND ((next_appointment_date IS NULL) OR (next_appointment_date >= prescribed_date)))),
-                                     CONSTRAINT prescription_heart_rate_check CHECK (((heart_rate > 0) AND (heart_rate < 250))),
-                                     CONSTRAINT prescription_weight_check CHECK ((weight > (0)::numeric))
+    prescription_id integer NOT NULL,
+    patient_id integer,
+    doctor_id integer,
+    medical_center_id integer,
+    summary text,
+    prescribed_date date DEFAULT CURRENT_DATE,
+    symptoms text,
+    weight numeric,
+    blood_pressure character varying(20),
+    heart_rate integer,
+    notes text,
+    next_appointment_date date,
+    CONSTRAINT chk_prescription_dates CHECK (((prescribed_date <= CURRENT_DATE) AND ((next_appointment_date IS NULL) OR (next_appointment_date >= prescribed_date)))),
+    CONSTRAINT prescription_heart_rate_check CHECK (((heart_rate > 0) AND (heart_rate < 250))),
+    CONSTRAINT prescription_weight_check CHECK ((weight > (0)::numeric))
 );
 
 
@@ -563,10 +565,10 @@ ALTER SEQUENCE public.prescription_prescription_id_seq OWNED BY public.prescript
 --
 
 CREATE TABLE public.refresh_token (
-                                      email character varying(255) NOT NULL,
-                                      role character varying(50) NOT NULL,
-                                      token character varying(512) NOT NULL,
-                                      expiry_date timestamp without time zone NOT NULL
+    email character varying(255) NOT NULL,
+    role character varying(50) NOT NULL,
+    token character varying(512) NOT NULL,
+    expiry_date timestamp without time zone NOT NULL
 );
 
 
@@ -577,8 +579,8 @@ ALTER TABLE public.refresh_token OWNER TO myuser;
 --
 
 CREATE TABLE public.severity_levels (
-                                        severity_level integer NOT NULL,
-                                        description text
+    severity_level integer NOT NULL,
+    description text
 );
 
 
@@ -589,12 +591,12 @@ ALTER TABLE public.severity_levels OWNER TO myuser;
 --
 
 CREATE TABLE public.symptom (
-                                patient_id integer NOT NULL,
-                                description text,
-                                date date DEFAULT CURRENT_DATE NOT NULL,
-                                "time" time without time zone DEFAULT CURRENT_TIME NOT NULL,
-                                overall_mood character varying(20),
-                                severity_level integer
+    patient_id integer NOT NULL,
+    description text,
+    date date DEFAULT CURRENT_DATE NOT NULL,
+    "time" time without time zone DEFAULT CURRENT_TIME NOT NULL,
+    overall_mood character varying(20),
+    severity_level integer
 );
 
 
@@ -605,12 +607,12 @@ ALTER TABLE public.symptom OWNER TO myuser;
 --
 
 CREATE TABLE public.test_params (
-                                    test_id integer NOT NULL,
-                                    parameter_name text NOT NULL,
-                                    unit text,
-                                    ideal_male_range text,
-                                    ideal_female_range text,
-                                    ideal_children_range text
+    test_id integer NOT NULL,
+    parameter_name text NOT NULL,
+    unit text,
+    ideal_male_range text,
+    ideal_female_range text,
+    ideal_children_range text
 );
 
 
@@ -621,15 +623,15 @@ ALTER TABLE public.test_params OWNER TO myuser;
 --
 
 CREATE TABLE public.test_request (
-                                     request_id integer NOT NULL,
-                                     patient_id integer,
-                                     test_id integer,
-                                     medical_center_id integer,
-                                     requested_date date DEFAULT CURRENT_DATE,
-                                     status character varying(10),
-                                     prescription_id integer,
-                                     notes text,
-                                     CONSTRAINT test_request_status_check CHECK (((status)::text = ANY ((ARRAY['Pending'::character varying, 'Accepted'::character varying, 'Rejected'::character varying, 'Sample Collected'::character varying])::text[])))
+    request_id integer NOT NULL,
+    patient_id integer,
+    test_id integer,
+    medical_center_id integer,
+    requested_date date DEFAULT CURRENT_DATE,
+    status character varying(10),
+    prescription_id integer,
+    notes text,
+    CONSTRAINT test_request_status_check CHECK (((status)::text = ANY (ARRAY[('Pending'::character varying)::text, ('Accepted'::character varying)::text, ('Rejected'::character varying)::text, ('Sample Collected'::character varying)::text])))
 );
 
 
@@ -662,9 +664,9 @@ ALTER SEQUENCE public.test_request_request_id_seq OWNED BY public.test_request.r
 --
 
 CREATE TABLE public.test_result_value (
-                                          performed_test_id integer NOT NULL,
-                                          parameter_name text NOT NULL,
-                                          result_value text
+    performed_test_id integer NOT NULL,
+    parameter_name text NOT NULL,
+    result_value text
 );
 
 
@@ -675,11 +677,11 @@ ALTER TABLE public.test_result_value OWNER TO myuser;
 --
 
 CREATE TABLE public.tests (
-                              test_id integer NOT NULL,
-                              test_name text,
-                              description text,
-                              type character varying(20),
-                              CONSTRAINT chk_test_type CHECK (((type)::text = ANY ((ARRAY['Pathology'::character varying, 'Imaging'::character varying])::text[])))
+    test_id integer NOT NULL,
+    test_name text,
+    description text,
+    type character varying(20),
+    CONSTRAINT chk_test_type CHECK (((type)::text = ANY (ARRAY[('Pathology'::character varying)::text, ('Imaging'::character varying)::text])))
 );
 
 

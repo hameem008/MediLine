@@ -1,7 +1,5 @@
 package com.example.MediLine.Controller;
 
-import com.example.MediLine.DTO.Patient;
-import com.example.MediLine.DTO.PatientProfileData;
 import com.example.MediLine.Repository.DoctorAvailabilityRepository;
 import com.example.MediLine.Repository.DoctorRepository;
 import lombok.AllArgsConstructor;
@@ -19,13 +17,13 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("")
+@RequestMapping("/patient")
 public class FindDoctorController {
     private final DoctorRepository doctorRepository;
     private final DoctorAvailabilityRepository doctorAvailabilityRepository;
 
 
-    @GetMapping("/patient/specialties")
+    @GetMapping("/specialties")
     public ResponseEntity<List<String>> getAllSpecialties() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -38,9 +36,15 @@ public class FindDoctorController {
 
     @GetMapping("/locations")
     public ResponseEntity<List<String>> getAllLocations() {
-        return ResponseEntity.ok(
-                doctorAvailabilityRepository.findAllDistinctDoctorLocations()
-        );
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok(
+                    doctorAvailabilityRepository.findAllDistinctDoctorLocations()
+            );
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.emptyList());
     }
 
 
